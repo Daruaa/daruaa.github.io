@@ -68,11 +68,11 @@
 					aEntity.setAttribute('scale', scale);
 
 					const boxRed = grow.getAttribute('scale');
-					Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] + 0.01);
+					Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] + 0.05);
 					grow.setAttribute('scale', boxRed);
 
 					const boxGreen = shrink.getAttribute('scale');
-					Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] + 0.01);
+					Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] + 0.05);
 					shrink.setAttribute('scale', boxGreen);
 				}
 
@@ -82,11 +82,11 @@
 					aEntity.setAttribute('scale', scale);
 
 					const boxRed = grow.getAttribute('scale');
-					Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] - 0.01);
+					Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] - 0.05);
 					grow.setAttribute('scale', boxRed);
 
 					const boxGreen = shrink.getAttribute('scale');
-					Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] - 0.01);
+					Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] - 0.05);
 					shrink.setAttribute('scale', boxGreen);
 				}
 			});
