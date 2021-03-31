@@ -51,24 +51,29 @@
 </script>
   <body style='margin : 0px; overflow: hidden;'>
 
-	<a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
+	<a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; patternRatio: 0.8;'>
 
 		<a-assets>
 			<a-asset-item id="voltorb" src="models/voltorb.glb"></a-asset-item>
 		</a-assets>
 
-		<a-marker preset="custom" type="pattern" url="models/pattern-pokeball.patt" markerhandler emitevents="true" cursor="rayOrigin: mouse" id="animated-marker">
-			<a-text position="-0.5 1 0" value="VOLTORB"></a-text>
+		<a-marker pattern="custom" type="pattern" url="models/pattern-pokeball.patt" markerhandler emitevents="true" cursor="rayOrigin: mouse" id="animated-marker">
+			<a-text position="-0.5 1 0" rotation="270 0 0" value="VOLTORB"></a-text>
 			<a-entity
 			id="animated-model"
 			gltf-model="#voltorb"
 			scale="0.15 0.15 0.15" 
 			position="0 0 0"
+			rotation="0 0 0"
+			animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true"
+			animation__mouseenter="property: position; to: 0 5 0; startEvents: mouseenter; dur: 500";
+			animation__mouseleave="property: position; to: 0 0 0; startEvents: mouseleave; dur: 500";
+		  
 			></a-entity>
-			<a-box id="boxGrow" position="-1 0 0" rotation="0 0 0" scale="0.5 0.5 0.5" color="green">
+			<a-box id="boxGrow" position="-1 0 0" rotation="270 0 0" scale="0.5 0.5 0.5" color="green">
 				<a-entity position="1.25 0.5 1" scale="3 3 3" text="value: GROW; color:black"></a-entity>
 			</a-box>
-			<a-box id="boxShrink" position="1 0 0" rotation="0 0 0" scale="0.5 0.5 0.5" color="red">
+			<a-box id="boxShrink" position="1 0 0" rotation="270 0 0" scale="0.5 0.5 0.5" color="red">
 				<a-entity position="1.25 0.5 1" scale="3 3 3" text="value: SHRINK; color:black"></a-entity>
 			</a-box>
 		</a-marker>
