@@ -86,7 +86,7 @@
 		<a-entity environment="preset: tron; lighting: none; shadow: none; lightPosition: 0 2.15 0"
 				  hide-in-ar-mode></a-entity>
 		
-		<a-entity id="character" position="-1 0 -3" scale="2.5 2.5 2.5">
+		<a-entity id="character" position="-1 0 -3" scale="1 1 1">
 		  <a-entity position="0 0 0" rotation="0 0 0"
 					gltf-model="#wraith"
 					animation-mixer
@@ -131,15 +131,15 @@
 		function setSize(scale) {
 		  document.getElementById('character').setAttribute('scale', {x: scale, y: scale, z: scale});
 		}
-		document.getElementById('btn_full').onclick = setSize.bind(this, 5);
-		document.getElementById('btn_half').onclick = setSize.bind(this, 2.5);
-		document.getElementById('btn_quarter').onclick = setSize.bind(this, 1.25);
+		document.getElementById('btn_full').onclick = setSize.bind(this, 2);
+		document.getElementById('btn_half').onclick = setSize.bind(this, 1);
+		document.getElementById('btn_quarter').onclick = setSize.bind(this, 0.5);
 	  </script>
   
 	  <!-- include the Glitch button to show what the webpage is about and
 			to make it easier for folks to view source and remix -->
-	  <!-- <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-	  <script src="https://button.glitch.me/button.js"></script> -->
+	  <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+	  <script src="https://button.glitch.me/button.js"></script>
 
 
   </body>
