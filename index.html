@@ -69,15 +69,39 @@
 			  if (!this.wasVisible) this.el.setAttribute('visible', false);
 			});
 		  }
-		});    
+		});
+		
+		AFRAME.registerComponent('audiohandler', {
+			init: function() {
+				let playing = false;
+				var el = this.el;
+				let audioEl = document.querySelector("a-sound");
+				// audioEl.setAttribute("src", "assets/wraith-i.mp3");
+				audioEl.addEventListener("loaded", (e) => {
+					console.log("AUDIO LOADED")
+					console.log(e)
+					var audio = audioEl.components.sound;
+					el.addEventListener('click', (ee) => {
+					console.log(ee)
+					if (!playing) {
+						audio.playSound();
+					} else {
+						audio.stopSound();
+
+					}
+					// playing = !playing;
+					});
+				})
+			}
+  		});
 	</script>
 
   </head>
  <body style='margin : 0px; overflow: hidden;'>
-	<a-scene>
+	<a-scene cursor="rayOrigin:mouse">
 
 		<a-assets timeout="30000">
-		  <a-asset-item id="wraith" src="models/wraith_animated.glb" response-type="arraybuffer"></a-asset-item>
+		  <a-asset-item id="wraith" src="assets/wraith_animated.glb" response-type="arraybuffer"></a-asset-item>
 		</a-assets>
 		
 		<a-camera position="0 1.2 0"></a-camera>
@@ -90,8 +114,11 @@
 		  <a-entity position="0 0 0" rotation="0 270 0"
 					gltf-model="#wraith"
 					animation-mixer
+					audiohandler
 					shadow="cast: true; receive: false"></a-entity>
-		</a-entity>  
+		</a-entity>
+		
+		<a-sound src="assets/wraith-i.mp3" autoplay="false" id="sound"></a-sound>
 		
 		<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
 		<a-light type="directional"
@@ -125,6 +152,11 @@
 		  <button id="btn_half">1/2</button>
 		  <button id="btn_quarter">1/4</button>
 		</p>
+		<p>
+			Sound option: <button id="btn_1">1</button>
+			<button id="btn_2">2</button>
+			<button id="btn_3">3</button>
+		  </p>
 		
 	  </div>
 	  <script>
@@ -134,12 +166,22 @@
 		document.getElementById('btn_full').onclick = setSize.bind(this, 2);
 		document.getElementById('btn_half').onclick = setSize.bind(this, 1);
 		document.getElementById('btn_quarter').onclick = setSize.bind(this, 0.5);
+
+
+		function setAudio(input) {
+		  document.getElementById('sound').setAttribute('src', input);
+		}
+		// let audioEl = document.querySelector("a-sound");
+	
+		document.getElementById('btn_1').onclick = setAudio.bind(this, "assets/wraith-i.mp3");
+		document.getElementById('btn_2').onclick = setAudio.bind(this, "assets/wraith-s.mp3");
+		document.getElementById('btn_3').onclick = setAudio.bind(this, "assets/wraith-k.mp3");
 	  </script>
   
 	  <!-- include the Glitch button to show what the webpage is about and
 			to make it easier for folks to view source and remix -->
-	  <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-	  <script src="https://button.glitch.me/button.js"></script>
+	  <!-- <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+	  <script src="https://button.glitch.me/button.js"></script> -->
 
 
   </body>
