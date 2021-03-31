@@ -1,6 +1,6 @@
 <html>
   <head>
-	<title>XR Project Daan Mortier</title>
+	<title>WebXR Project Daan Mortier</title>
 
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
@@ -171,18 +171,11 @@
 		function setAudio(input) {
 		  document.getElementById('sound').setAttribute('src', input);
 		}
-		// let audioEl = document.querySelector("a-sound");
 	
 		document.getElementById('btn_1').onclick = setAudio.bind(this, "assets/wraith-i.mp3");
 		document.getElementById('btn_2').onclick = setAudio.bind(this, "assets/wraith-s.mp3");
 		document.getElementById('btn_3').onclick = setAudio.bind(this, "assets/wraith-k.mp3");
 	  </script>
-  
-	  <!-- include the Glitch button to show what the webpage is about and
-			to make it easier for folks to view source and remix -->
-	  <!-- <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-	  <script src="https://button.glitch.me/button.js"></script> -->
-
 
   </body>
 </html>
