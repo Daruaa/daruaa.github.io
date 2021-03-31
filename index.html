@@ -1,106 +1,145 @@
 <html>
   <head>
+	<title>XR Project Daan Mortier</title>
+
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-	<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-	<script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
-    <!-- <script src="https://rawgit.com/nicolocarpignoli/nicolocarpignoli.github.io/master/ar-click-events/events.js"></script> -->
-  </head>
-  <script type="text/javascript">		
-	AFRAME.registerComponent('markerhandler', {
 
-	init: function() {
-		const animatedMarker = document.querySelector("#animated-marker");
-		const aEntity = document.querySelector("#animated-model");
+	<link rel="stylesheet" href="/style.css">
 
-		const grow = document.querySelector("#boxGrow");
-		const shrink = document.querySelector("#boxShrink");
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-extras@3.3.0/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
 
-		// every click, we make our model grow in size :)
-		animatedMarker.addEventListener('click', function(ev, target){
-			const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
-			if (grow && intersectedElement === grow) {
-				const scale = aEntity.getAttribute('scale');
-				Object.keys(scale).forEach((key) => scale[key] = scale[key] + 0.01);
-				aEntity.setAttribute('scale', scale);
-
-				const boxRed = grow.getAttribute('scale');
-				Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] + 0.05);
-				grow.setAttribute('scale', boxRed);
-
-				const boxGreen = shrink.getAttribute('scale');
-				Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] + 0.05);
-				shrink.setAttribute('scale', boxGreen);
-			}
-
-			if (shrink && intersectedElement === shrink) {
-				const scale = aEntity.getAttribute('scale');
-				Object.keys(scale).forEach((key) => scale[key] = scale[key] - 0.01);
-				aEntity.setAttribute('scale', scale);
-
-				const boxRed = grow.getAttribute('scale');
-				Object.keys(boxRed).forEach((key) => boxRed[key] = boxRed[key] - 0.05);
-				grow.setAttribute('scale', boxRed);
-
-				const boxGreen = shrink.getAttribute('scale');
-				Object.keys(boxGreen).forEach((key) => boxGreen[key] = boxGreen[key] - 0.05);
-				shrink.setAttribute('scale', boxGreen);
-			}
-		});
-	}});
-</script>
-  <body style='margin : 0px; overflow: hidden;'>
-
-	<a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false; patternRatio: 0.8;'>
-
-		<a-assets>
-			<a-asset-item id="voltorb" src="models/voltorb.glb"></a-asset-item>
-		</a-assets>
-
-		<a-marker pattern="custom" type="pattern" url="models/pattern-pokeball.patt" markerhandler emitevents="true" cursor="rayOrigin: mouse" id="animated-marker">
-			<a-text position="-0.5 1 0" rotation="270 0 0" value="VOLTORB"></a-text>
-			<a-entity
-			id="animated-model"
-			gltf-model="#voltorb"
-			scale="0.15 0.15 0.15" 
-			position="0 0 0"
-			rotation="0 0 0"
-			animation="property: rotation; to:360 0 0; dur: 5000; easing: linear; loop: true"
-			animation__mouseenter="property: position; to: 0 5 0; startEvents: mouseenter; dur: 500";
-			animation__mouseleave="property: position; to: 0 0 0; startEvents: mouseleave; dur: 500";
-		  
-			></a-entity>
-			<a-box id="boxGrow" position="-1 0 0" rotation="270 0 0" scale="0.5 0.5 0.5" color="green">
-				<a-entity position="1.25 0.5 1" scale="3 3 3" text="value: GROW; color:black"></a-entity>
-			</a-box>
-			<a-box id="boxShrink" position="1 0 0" rotation="270 0 0" scale="0.5 0.5 0.5" color="red">
-				<a-entity position="1.25 0.5 1" scale="3 3 3" text="value: SHRINK; color:black"></a-entity>
-			</a-box>
-		</a-marker>
-
-		<a-entity camera></a-entity>
-
-	</a-scene>
-
-	<!-- <script type="text/javascript">
-		AFRAME.registerComponent('startButton', {
+	<script>
+		// WebXR requires HTTPS, so the site doesn't work if someone manually enters
+		// the URL and ends up using HTTP. To work around this, force redirect from
+		// http to https for non-localhost addresses.
+		if (window.location.protocol == "http:" &&
+			window.location.hostname != "localhost" && 
+			window.location.hostname != "127.0.0.1" &&
+			window.location.hostname != "[::1]") {
+		  window.location = window.location.href.replace('http:', 'https:');        
+		}
+	</script>
+	
+	<script>
+		// Define a few custom components useful for AR mode. While these are somewhat reusable,
+		// I recommend checking if there are officially supported alternatives before copying
+		// these into new projects.
+	  
+		// See also https://github.com/aframevr/aframe/pull/4356
+		AFRAME.registerComponent('hide-in-ar-mode', {
+		  // Set this object invisible while in AR mode.
 		  init: function () {
-			var cube = document.querySelector('a-scene').sceneEl.querySelector("#boxId");
-			cube.addEventListener("mousedown", function (evt) {
-			  cube.setAttribute('material', 'color', 'red');
+			this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+			  this.wasVisible = this.el.getAttribute('visible');
+			  if (this.el.sceneEl.is('ar-mode')) {
+				this.el.setAttribute('visible', false);
+			  }
 			});
-			cube.addEventListener("mouseup", function (evt) {
-			  cube.setAttribute('material', 'color', 'green');//we want to change this from "blue" to "green" to avoid some bugs
-			});
-			cube.addEventListener("mouseenter", function (evt) {
-			  cube.setAttribute('material', 'color', 'green');
-			});
-			cube.addEventListener("mouseleave", function (evt) {
-			  cube.setAttribute('material', 'color', 'blue');
+			this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+			  if (this.wasVisible) this.el.setAttribute('visible', true);
 			});
 		  }
 		});
-	</script> -->
+		
+		AFRAME.registerComponent('ar-shadows', {
+		  // Swap an object's material to a transparent shadows-only material while
+		  // in AR mode. Intended for use with a ground plane. The object is also
+		  // set visible while in AR mode, this is useful if it's hidden in other
+		  // modes due to them using a 3D environment.
+		  schema: {
+			opacity: {default: 0.3}
+		  },
+		  init: function () {
+			this.el.sceneEl.addEventListener('enter-vr', (ev) => {
+			  this.wasVisible = this.el.getAttribute('visible');
+			  if (this.el.sceneEl.is('ar-mode')) {
+				this.savedMaterial = this.el.object3D.children[0].material;
+				this.el.object3D.children[0].material = new THREE.ShadowMaterial();
+				this.el.object3D.children[0].material.opacity = this.data.opacity;
+				this.el.setAttribute('visible', true);
+			  }
+			});
+			this.el.sceneEl.addEventListener('exit-vr', (ev) => {
+			  if (this.savedMaterial) {
+				this.el.object3D.children[0].material = this.savedMaterial;
+				this.savedMaterial = null;
+			  }
+			  if (!this.wasVisible) this.el.setAttribute('visible', false);
+			});
+		  }
+		});    
+	</script>
+
+  </head>
+ <body style='margin : 0px; overflow: hidden;'>
+	<a-scene>
+
+		<a-assets timeout="30000">
+		  <a-asset-item id="wraith" src="models/wraith_animated.glb" response-type="arraybuffer"></a-asset-item>
+		</a-assets>
+		
+		<a-camera position="0 1.2 0"></a-camera>
+		
+		<!-- Environment for 2D and VR viewing. It's auto-hidden in AR mode. -->
+		<a-entity environment="preset: tron; lighting: none; shadow: none; lightPosition: 0 2.15 0"
+				  hide-in-ar-mode></a-entity>
+		
+		<a-entity id="character" position="-1 0 -3" scale="2.5 2.5 2.5">
+		  <a-entity position="0 0 0" rotation="0 0 0"
+					gltf-model="#wraith"
+					animation-mixer
+					shadow="cast: true; receive: false"></a-entity>
+		</a-entity>  
+		
+		<a-entity light="type: ambient; intensity: 0.5;"></a-entity>
+		<a-light type="directional"
+				 light="castShadow: true;
+						shadowMapHeight: 1024;
+						shadowMapWidth: 1024;
+						shadowCameraLeft: -7;
+						shadowCameraRight: 5;
+						shadowCameraBottom: -5;
+						shadowCameraTop: 5;"
+				 id="light"
+				 target="character"
+				 position="-5 3 1.5"></a-light>
+  
+		<!-- This shadow-receiving plane is only visible in AR mode. -->
+		<a-plane height="15" width="15" position="0 0 -3" rotation="-90 0 0"
+				 shadow="receive: true"
+				 ar-shadows="opacity: 0.3"
+				 visible="false"></a-plane>
+	  </a-scene>
+	  
+	  <div id="text">
+		<h1>A-Frame Wraith for VR/AR</h1>
+	  
+		<p>
+		  Model: <a href="https://www.cgtrader.com/free-3d-models/character/woman/wraith-cyber-ninja-apex-legends">Wraith</a> by 
+		  <a href="https://www.cgtrader.com/">cgtrader</a>.
+		</p>
+		<p>
+		  Size: <button id="btn_full">Full</button>
+		  <button id="btn_half">1/2</button>
+		  <button id="btn_quarter">1/4</button>
+		</p>
+		
+	  </div>
+	  <script>
+		function setSize(scale) {
+		  document.getElementById('character').setAttribute('scale', {x: scale, y: scale, z: scale});
+		}
+		document.getElementById('btn_full').onclick = setSize.bind(this, 5);
+		document.getElementById('btn_half').onclick = setSize.bind(this, 2.5);
+		document.getElementById('btn_quarter').onclick = setSize.bind(this, 1.25);
+	  </script>
+  
+	  <!-- include the Glitch button to show what the webpage is about and
+			to make it easier for folks to view source and remix -->
+	  <!-- <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
+	  <script src="https://button.glitch.me/button.js"></script> -->
 
 
   </body>
